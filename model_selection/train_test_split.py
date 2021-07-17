@@ -12,13 +12,14 @@ def train_test_split(X, y, train_size=None, test_size=0.2):
     if train_size:
         test_size = 1 - train_size
     
-    # Create an empty array to put test data
-    X_test = np.empty((test_size, X.shape[1]))
-    y_test = np.empty((test_size, 1))
-    
+
     # Setup the iterating params for test data
     idx = 0
-    test_data_count = len(X) * test_size
+    test_data_count = round(len(X) * test_size)
+    
+    # Create an empty array to put test data
+    X_test = np.empty((test_data_count, X.shape[1]))
+    y_test = np.empty((test_data_count, 1))
     
     # Iterate until it reaches to the total number of test data
     while idx < test_data_count:

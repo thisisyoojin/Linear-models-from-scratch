@@ -1,4 +1,5 @@
 import numpy as np
+from .Batchifier import Batchifier
 
 class LinearRegression:
     
@@ -17,23 +18,29 @@ class LinearRegression:
         return f"weight:{self.w}\nbias:{self.b}"
 
 
-    def fit(self, X_train, y_train, epochs=10, learning_rate=0.001):
+    def fit(self, X_train, y_train, epochs=10, learning_rate=0.01):
         """
         Fit the model according to the given training data
         """
         # Initialise the parameters for model
-        n_features = X_train.shape[1]
-        self.w = np.random.randn(n_features)
+        self.w = np.random.randn(X_train.shape[1])
         self.b = np.random.randn()
         
+        batchifier = Batchifier(X_train, y_train)
         for epoch in range(epochs):
-            y_pred = self.predict(X_train)
-            grad_w, grad_b = self.calculate_gradient(X_train, y_train, y_pred)
-            self.w -= learning_rate * grad_w
-            self.b -= learning_rate * grad_b
-            loss = self.calculate_loss(y_train, y_pred)
-            print(f"Loss of epoch {epoch+1}: {loss}")
-        
+            loss_per_epoch = []
+            
+
+            for X_batch, y_batch in batchifier:
+                y_pred = self.predict(X_batch)
+                grad_w, grad_b = self.calculate_gradient(X_batch, y_batch, y_pred)
+                self.w -= learning_rate * grad_w
+                self.b -= learning_rate * grad_b
+                loss_per_batch = self.calculate_loss(y_batch, y_pred)
+                loss_per_epoch.append(loss_per_batch)
+            
+            print(f"Loss of epoch {epoch+1}: {np.mean(loss_per_epoch)}")
+
 
 
     def predict(self, X):
@@ -66,7 +73,7 @@ class LinearRegression:
         grad_w = np.mean(grad_individuals, axis=0)
         
         # calculate the gradient for bias
-        grad_b = 2 * np.mean(y_pred - y)
+        grad_b = 2 * np.mean(y_pred - y, axis=0)
 
         return grad_w, grad_b
 
