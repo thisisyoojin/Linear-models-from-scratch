@@ -13,8 +13,8 @@ def train_test_split(X, y, train_size=None, test_size=0.2):
         test_size = 1 - train_size
     
     # Create an empty array to put test data
-    X_test = np.empty((train_size, X.shape[1]))
-    y_test = np.empty((train_size, 1))
+    X_test = np.empty((test_size, X.shape[1]))
+    y_test = np.empty((test_size, 1))
     
     # Setup the iterating params for test data
     idx = 0
