@@ -17,16 +17,23 @@ class LinearRegression:
         pass
 
 
-    def fit(self, X, y):
+    def fit(self, X_train, y_train, epochs=20, learning_rate=0.1):
         """
         Fit the model according to the given training data
         """
         # Initialise the parameters for model
-        n_features = X.shape[1]
+        n_features = X_train.shape[1]
         self.w = np.random.randn(n_features)
         self.b = np.random.randn()
         
-        pass
+        for epoch in epochs:
+            y_pred = self.predict(X_train)
+            grad_w, grad_b = self.calculate_gradient(X_train, y_train, y_pred)
+            self.w -= learning_rate * grad_w
+            self.b -= learning_rate * grad_b
+            loss = self.calculate_loss(y_train, y_pred)
+            print(f"Loss of epoch {epoch+1}: {loss}")
+        
 
 
     def predict(self, X):
@@ -38,19 +45,18 @@ class LinearRegression:
         return np.matmul(X, self.w) + self.b
 
 
-    def calculate_loss(self, X, y):
+    def calculate_loss(self, y, y_pred):
         """
         MSE(Mean Squared Error)
         """
-        pass
+        return np.mean((y_pred - y)**2)
 
 
-    def calculate_gradient(self, X, y):
+    def calculate_gradient(self, X, y, y_pred):
         """
         Calculate gradient for the current parameters
         """
         # predict the value with a model
-        y_pred = self.predict(X)
 
         # calculate the gradient for weights(coefficient)
         grad_individuals = []
