@@ -2,11 +2,10 @@ import numpy as np
 
 class Batchifier:
     
-    def __init__(self, X, y, batch_size=16):
-        self.batches = self.batch(X, y, batch_size)
+    def __init__(self):
+        self.batches = []
 
-    def batch(self, X, y, batch_size):
-        
+    def batch(self, X, y, batch_size=16):
         batches = []
         while X.any():
             if len(X) <= batch_size:
@@ -23,6 +22,8 @@ class Batchifier:
                 X = np.delete(X, num_generated, axis=0)
                 y = np.delete(y, num_generated, axis=0)
             batches.append((X_batch, y_batch))
+        
+        self.batches = batches
         return batches
 
     def __getitem__(self, idx):
