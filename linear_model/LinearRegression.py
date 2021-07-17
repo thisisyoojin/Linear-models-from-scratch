@@ -14,7 +14,7 @@ class LinearRegression:
         """
         Get parameters for this estimator
         """
-        pass
+        return f"weight:{self.w}\nbias:{self.b}"
 
 
     def fit(self, X_train, y_train, epochs=20, learning_rate=0.1):
