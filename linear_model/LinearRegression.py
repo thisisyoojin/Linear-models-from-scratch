@@ -26,7 +26,7 @@ class LinearRegression:
         self.w = np.random.randn(n_features)
         self.b = np.random.randn()
         
-        for epoch in epochs:
+        for epoch in range(epochs):
             y_pred = self.predict(X_train)
             grad_w, grad_b = self.calculate_gradient(X_train, y_train, y_pred)
             self.w -= learning_rate * grad_w
@@ -40,7 +40,7 @@ class LinearRegression:
         """
         Predict the values
         """
-        if not self.w:
+        if self.w is None:
             raise Exception("You should fit a model first.")
         return np.matmul(X, self.w) + self.b
 
