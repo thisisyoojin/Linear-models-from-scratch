@@ -1,3 +1,4 @@
+import numpy as np
 
 class LinearRegression:
     
@@ -5,7 +6,9 @@ class LinearRegression:
         """
         Initialise linear regression model
         """
-        pass
+        self.w = None
+        self.b = None
+
 
     def get_params(self):
         """
@@ -14,17 +17,19 @@ class LinearRegression:
         pass
 
 
-    def fit(self):
+    def fit(self, X, y):
         """
         Fit the model according to the given training data
         """
         pass
 
-    def predict(self):
+    def predict(self, X):
         """
         Predict the values
         """
-        pass
+        if not self.w:
+            raise Exception("You should fit a model first.")
+        return np.matmul(X, self.w) + self.b
 
 
     def calculate_loss(self):
