@@ -15,7 +15,7 @@ def regression():
     X_test = (X_test - X_train_mean) / X_train_std
 
     regressor = LinearRegression()
-    regressor.fit(X_train, y_train)
+    regressor.fit(X_train, y_train, draw=True)
     print(regressor.score(X_train, y_train))
 
 

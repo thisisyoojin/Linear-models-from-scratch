@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from .Batchifier import Batchifier
 
 class LinearRegression:
@@ -18,7 +19,7 @@ class LinearRegression:
         return f"weight:{self.w}\nbias:{self.b}"
 
 
-    def fit(self, X_train, y_train, epochs=10, learning_rate=0.01):
+    def fit(self, X_train, y_train, epochs=10, learning_rate=0.01, draw=False):
         """
         Fit the model according to the given training data
         """
@@ -26,10 +27,10 @@ class LinearRegression:
         self.w = np.random.randn(X_train.shape[1])
         self.b = np.random.randn()
         
-        batchifier = Batchifier(X_train, y_train)
+        losses = []
         for epoch in range(epochs):
             loss_per_epoch = []
-            
+            batchifier = Batchifier(X_train, y_train)    
 
             for X_batch, y_batch in batchifier:
                 y_pred = self.predict(X_batch)
@@ -40,6 +41,13 @@ class LinearRegression:
                 loss_per_epoch.append(loss_per_batch)
             
             print(f"Loss of epoch {epoch+1}: {np.mean(loss_per_epoch)}")
+            losses.append(np.mean(loss_per_epoch))
+        
+        if draw:
+            plt.plot(losses)
+            plt.show()
+
+        return losses
 
 
 
