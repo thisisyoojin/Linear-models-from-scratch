@@ -17,7 +17,7 @@ class LinearRegression:
         return f"weight:{self.w}\nbias:{self.b}"
 
 
-    def fit(self, X_train, y_train, epochs=20, learning_rate=0.1):
+    def fit(self, X_train, y_train, epochs=10, learning_rate=0.001):
         """
         Fit the model according to the given training data
         """
@@ -71,8 +71,13 @@ class LinearRegression:
         return grad_w, grad_b
 
 
-    def score(self):
+    def score(self, X, y_true):
         """
         Return the coefficient of determination R squared of the prediction
         """
-        pass
+        y_pred = self.predict(X)
+        # u is the residual sum of squres
+        u = ((y_true - y_pred) ** 2).sum()
+        # v is the total sum of squares
+        v = ((y_true - y_true.mean()) ** 2).sum()
+        return round(1 - u/v, 5)
