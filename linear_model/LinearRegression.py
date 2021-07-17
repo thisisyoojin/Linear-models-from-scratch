@@ -19,7 +19,7 @@ class LinearRegression:
         return f"weight:{self.w}\nbias:{self.b}"
 
 
-    def fit(self, X_train, y_train, epochs=10, learning_rate=0.01, draw=False):
+    def fit(self, X_train, y_train, X_val=None, y_val=None, epochs=30, learning_rate=0.01, draw=False):
         """
         Fit the model according to the given training data
         """
@@ -27,7 +27,8 @@ class LinearRegression:
         self.w = np.random.randn(X_train.shape[1])
         self.b = np.random.randn()
         
-        losses = []
+        train_losses = []
+        val_losses = []
         for epoch in range(epochs):
             loss_per_epoch = []
             batchifier = Batchifier(X_train, y_train)    
@@ -39,16 +40,22 @@ class LinearRegression:
                 self.b -= learning_rate * grad_b
                 loss_per_batch = self.calculate_loss(y_batch, y_pred)
                 loss_per_epoch.append(loss_per_batch)
-            
+
             print(f"Loss of epoch {epoch+1}: {np.mean(loss_per_epoch)}")
-            losses.append(np.mean(loss_per_epoch))
+            train_losses.append(np.mean(loss_per_epoch))
+
+            if X_val is not None:
+                y_pred = self.predict(X_val)
+                val_losses.append(self.calculate_loss(y_val, y_pred))
+                
         
         if draw:
-            plt.plot(losses)
+            plt.plot(train_losses)
+            if X_val is not None:
+                plt.plot(val_losses)
             plt.show()
 
-        return losses
-
+        return train_losses, val_losses
 
 
     def predict(self, X):
