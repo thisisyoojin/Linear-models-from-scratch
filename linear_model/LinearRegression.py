@@ -11,15 +11,22 @@ class LinearRegression:
         self.w = None
         self.b = None
 
-
-    def get_params(self):
+    @property
+    def coef_(self):
         """
-        Get parameters for this estimator
+        Get weight(coefficient) for this estimator
         """
-        return f"weight:{self.w}\nbias:{self.b}"
+        return self.w
+    
+    @property
+    def intercept_(self):
+        """
+        Get bias(intercept) for this estimator
+        """
+        return self.b
 
 
-    def fit(self, X_train, y_train, X_val=None, y_val=None, epochs=30, learning_rate=0.01, draw=False):
+    def fit(self, X_train, y_train, X_val=None, y_val=None, epochs=60, learning_rate=0.01, draw=False):
         """
         Fit the model according to the given training data
         """
@@ -27,13 +34,23 @@ class LinearRegression:
         self.w = np.random.randn(X_train.shape[1])
         self.b = np.random.randn()
         
+        # List for losses and early stopping loss
         train_losses = []
         val_losses = []
+        last_5_losses = [0]*5
+        
+        # Create an instance for batchifier
+        batchifier = Batchifier()
+        
+        # epochs: the number of running the whole dataset
         for epoch in range(epochs):
             loss_per_epoch = []
-            batchifier = Batchifier(X_train, y_train)    
+            
+            # Creates a shuffled batch 
+            batchifier.batch(X_train, y_train)
 
             for X_batch, y_batch in batchifier:
+                # Predict the value
                 y_pred = self.predict(X_batch)
                 grad_w, grad_b = self.calculate_gradient(X_batch, y_batch, y_pred)
                 self.w -= learning_rate * grad_w
@@ -46,9 +63,19 @@ class LinearRegression:
 
             if X_val is not None:
                 y_pred = self.predict(X_val)
-                val_losses.append(self.calculate_loss(y_val, y_pred))
-                
-        
+                val_loss = self.calculate_loss(y_val, y_pred)
+                val_losses.append(val_loss)
+                last_5_losses[epoch%5] = val_loss
+
+            else:
+                last_5_losses[epoch%5] = np.mean(loss_per_epoch)
+
+            # Early stopping
+            if np.std(last_5_losses) <= 1:
+                print("No obvious improvment is observed.")
+                break
+
+           
         if draw:
             plt.plot(train_losses)
             if X_val is not None:
@@ -99,7 +126,8 @@ class LinearRegression:
         """
         y_pred = self.predict(X)
         # u is the residual sum of squres
-        u = ((y_true - y_pred) ** 2).sum()
+        u = ((y_true - y_pred)**2).sum()
         # v is the total sum of squares
         v = ((y_true - y_true.mean()) ** 2).sum()
+        print("u:",u, ",v:", v, ", u/v:", u/v)
         return round(1 - u/v, 5)
