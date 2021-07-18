@@ -4,12 +4,14 @@ from .Batchifier import Batchifier
 
 class LinearRegression:
     
-    def __init__(self):
+    def __init__(self, learning_rate=0.01, batch_size=16):
         """
         Initialise linear regression model
         """
         self.w = None
         self.b = None
+        self.learning_rate = learning_rate
+        self.batch_size = batch_size
 
     @property
     def coef_(self):
@@ -26,14 +28,23 @@ class LinearRegression:
         return self.b
 
 
-    def fit(self, X_train, y_train, X_val=None, y_val=None, epochs=60, learning_rate=0.01, draw=False):
+    def fit(self, X_train, y_train, X_val=None, y_val=None, epochs=50, learning_rate=None, batch_size=None, draw=False):
         """
         Fit the model according to the given training data
         """
+        
         # Initialise the parameters for model
         self.w = np.random.randn(X_train.shape[1])
         self.b = np.random.randn()
         
+        
+        if learning_rate is None:
+            learning_rate = self.learning_rate
+
+        if batch_size is None:
+            batch_size = self.batch_size
+        
+
         # List for losses and early stopping loss
         train_losses = []
         val_losses = []
