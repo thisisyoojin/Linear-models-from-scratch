@@ -24,8 +24,8 @@ class GridSearchCV:
         
         for r in res:
             param = {keys[idx]:r[idx] for idx in range(len(r))}
-            train_loss, val_loss = self.model().fit(X, y, **param)
-            result.append((param, train_loss, val_loss))
+            train_loss, val_loss = self.model().fit(X, y, **param, debug=False)
+            result.append((param, np.mean(train_loss), np.mean(val_loss)))
 
         return result
             

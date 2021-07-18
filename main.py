@@ -36,10 +36,11 @@ def grid_search():
     lr = GridSearchCV(LinearRegression, params)
     X, y = load_boston(return_X_y=True)
     X_train, X_val, X_test, y_train, y_val, y_test = preprocess(X, y)
-    result = lr.fit(X_train, y_train)
-    result = sorted(result, key=lambda x:x[2])[0]
-    print(f"Best hyperparameter is: {result[0]}")
-
+    results = lr.fit(X_train, y_train)
+    for result in results:
+        print(f"{result[0]} - Training loss: {np.mean(result[1])}")
+    best_result = sorted(results, key=lambda x:x[1])[0]
+    print(f"Best hyperparameter is: {best_result[0]}")
 
 
 if __name__ == "__main__":
