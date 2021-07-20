@@ -1,7 +1,7 @@
-from linear_model.LinearModel import LinearModel
 import numpy as np
 import matplotlib.pyplot as plt
 from .Batchifier import Batchifier
+from linear_model import LinearModel
 
 class LinearRegression(LinearModel):
     
@@ -12,7 +12,7 @@ class LinearRegression(LinearModel):
         super().__init__(learning_rate=learning_rate, batch_size=batch_size)
 
 
-    def fit(self, X_train, y_train, X_val=None, y_val=None, epochs=50, learning_rate=None, batch_size=None, draw=False):
+    def fit(self, X_train, y_train, X_val=None, y_val=None, epochs=50, learning_rate=None, batch_size=None, draw=False, debug=True):
         """
         Fit the model according to the given training data
         """
@@ -53,7 +53,9 @@ class LinearRegression(LinearModel):
                 loss_per_batch = self.calculate_loss(y_batch, y_pred)
                 loss_per_epoch.append(loss_per_batch)
 
-            print(f"Loss of epoch {epoch+1}: {np.mean(loss_per_epoch)}")
+            if debug:
+                print(f"Loss of epoch {epoch+1}: {np.mean(loss_per_epoch)}")
+            
             train_losses.append(np.mean(loss_per_epoch))
 
             if X_val is not None:
@@ -67,7 +69,8 @@ class LinearRegression(LinearModel):
 
             # Early stopping
             if np.std(last_5_losses) <= 1:
-                print("No obvious improvment is observed.")
+                if debug:
+                    print("No obvious improvment is observed.")
                 break
 
            
@@ -81,12 +84,40 @@ class LinearRegression(LinearModel):
 
 
 
+    def calculate_gradient(self, X, y):
+        """
+        Calculate gradient for the current parameters
+        """
+        # predict the value with a model
+        y_pred = self.predict(X)
+
+        # calculate the gradient for weights(coefficient)
+        grad_individuals = []
+        for idx in range(len(X)):
+            grad = 2 * (y_pred[idx] - y[idx]) * X[idx]
+            grad_individuals.append(grad)
+        grad_w = np.mean(grad_individuals, axis=0)
+        
+        # calculate the gradient for bias
+        grad_b = 2 * np.mean(y_pred - y, axis=0)
+
+        return grad_w, grad_b
+
+
     def calculate_loss(self, y, y_pred):
         """
         MSE(Mean Squared Error)
         """
         return np.mean((y_pred - y)**2)
 
+
+    def predict(self, X):
+        """
+        Predict the values
+        """
+        if self.w is None:
+            raise Exception("You should fit a model first.")
+        return np.matmul(X, self.w) + self.b
 
 
     def score(self, X, y_true):
