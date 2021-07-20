@@ -1,41 +1,30 @@
-from sklearn.datasets import load_boston
+from sklearn.datasets import load_boston, load_breast_cancer
 from model_selection import train_test_split, GridSearchCV
-from linear_model import LinearRegression
+from linear_model import LinearRegression, LogisticRegression
 import numpy as np
 
-def preprocess(X, y):
-    
-    X_train, X_test, y_train, y_test = train_test_split(X, y)
-    X_train, X_val, y_train, y_val = train_test_split(X_train, y_train)
-
-    X_train_mean = np.mean(X_train, axis=0)
-    X_train_std = np.std(X_train, axis=0)
-    
-    X_train = (X_train - X_train_mean) / X_train_std
-    X_val = (X_val - X_train_mean) / X_train_std
-    X_test = (X_test - X_train_mean) / X_train_std
-
-    return X_train, X_val, X_test, y_train, y_val, y_test
+np.set_printoptions(precision=10)
 
 
 def regression():
     X, y = load_boston(return_X_y=True)
-    X_train, X_val, X_test, y_train, y_val, y_test = preprocess(X, y)
-    print(X_train.shape, X_val.shape, X_test.shape)
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
 
     regressor = LinearRegression()
-    regressor.fit(X_train, y_train, X_val=X_val, y_val=y_val)
-    print(regressor.score(X_val, y_val))
+    regressor.fit(X_train, y_train, normalise=True, draw=True)
+    print(regressor.score(X_test, y_test))
 
 
 def grid_search():
+
+    X, y = load_boston(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    
     params = {
         "learning_rate": [0.01, 0.05, 0.1],
         "batch_size": [8, 16, 32]
     }
     lr = GridSearchCV(LinearRegression, params)
-    X, y = load_boston(return_X_y=True)
-    X_train, X_val, X_test, y_train, y_val, y_test = preprocess(X, y)
     results = lr.fit(X_train, y_train)
     for result in results:
         print(f"{result[0]} - Training loss: {np.mean(result[1])}")
@@ -43,9 +32,16 @@ def grid_search():
     print(f"Best hyperparameter is: {best_result[0]}")
 
 
+def classification():
+    X, y = load_breast_cancer(return_X_y=True)
+    X_train, X_test, y_train, y_test = train_test_split(X, y)
+    classifier = LogisticRegression()
+    classifier.fit(X_train, y_train)
+
+
 if __name__ == "__main__":
     #regression()
-    grid_search()
-    
+    #grid_search()
+    classification()
 
     

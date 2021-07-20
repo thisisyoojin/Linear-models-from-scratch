@@ -12,6 +12,7 @@ class Batchifier:
             batch_size = self.batch_size
 
         batches = []
+        
         while X.any():
             if len(X) <= batch_size:
                 batches.append((X, y))
