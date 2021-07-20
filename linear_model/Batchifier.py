@@ -2,10 +2,15 @@ import numpy as np
 
 class Batchifier:
     
-    def __init__(self):
+    def __init__(self, batch_size=16):
         self.batches = []
+        self.batch_size = batch_size
 
-    def batch(self, X, y, batch_size=16):
+    def batch(self, X, y, batch_size=None):
+        
+        if batch_size is None:
+            batch_size = self.batch_size
+
         batches = []
         while X.any():
             if len(X) <= batch_size:
