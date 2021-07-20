@@ -5,7 +5,7 @@ from linear_model import LinearModel
 
 class LinearRegression(LinearModel):
     
-    def __init__(self, learning_rate=0.01, batch_size=16):
+    def __init__(self, learning_rate=0.01, batch_size=8):
         """
         Initialise linear regression model
         """
@@ -45,11 +45,12 @@ class LinearRegression(LinearModel):
             batchifier.batch(X_train, y_train)
 
             for X_batch, y_batch in batchifier:
-                # Predict the value
                 y_pred = self.predict(X_batch)
+                # Calculates the gradient and update params
                 grad_w, grad_b = self.calculate_gradient(X_batch, y_batch, y_pred)
                 self.w -= learning_rate * grad_w
                 self.b -= learning_rate * grad_b
+                # Calculates the loss
                 loss_per_batch = self.calculate_loss(y_batch, y_pred)
                 loss_per_epoch.append(loss_per_batch)
 
@@ -84,12 +85,10 @@ class LinearRegression(LinearModel):
 
 
 
-    def calculate_gradient(self, X, y):
+    def calculate_gradient(self, X, y, y_pred):
         """
         Calculate gradient for the current parameters
         """
-        # predict the value with a model
-        y_pred = self.predict(X)
 
         # calculate the gradient for weights(coefficient)
         grad_individuals = []
@@ -97,11 +96,11 @@ class LinearRegression(LinearModel):
             grad = 2 * (y_pred[idx] - y[idx]) * X[idx]
             grad_individuals.append(grad)
         grad_w = np.mean(grad_individuals, axis=0)
-        
+        #grad_w2 = 2 * np.mean((y_pred - y) @ X)
         # calculate the gradient for bias
         grad_b = 2 * np.mean(y_pred - y, axis=0)
 
-        return grad_w, grad_b
+        return grad_w2, grad_b
 
 
     def calculate_loss(self, y, y_pred):
