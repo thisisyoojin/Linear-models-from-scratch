@@ -61,9 +61,9 @@ class LogisticRegression(LinearModel):
                 loss_per_epoch.append(loss_per_batch)
                 
                 # debug printing to check prediction on the last epoch
-                # if epoch == epochs - 1:
-                #     for y_hat, y_true in zip(y_pred, y_batch):
-                #         print(y_hat, ":", y_true)
+                if epoch == epochs-1:
+                    for y_hat, y_true in zip(y_pred, y_batch):
+                        print(y_hat, ":", y_true)
 
             if debug:
                 print(f"Loss of epoch {epoch+1}: {np.mean(loss_per_epoch, axis=0)}")
@@ -101,15 +101,15 @@ class LogisticRegression(LinearModel):
         dL_dy_pred = -(y/y_pred - (1-y)/(1-y_pred))
         dy_pred_dz = y_pred * (1-y_pred)
 
-        grad_individuals = []
-        for idx in range(len(X)):
-            grad = dL_dy_pred[idx] * dy_pred_dz[idx] * X[idx]
-            grad_individuals.append(grad)
-        grad_w = np.mean(grad_individuals, axis=0)
-        #grad_w2 = np.matmul(dL_dy_pred * dy_pred_dz, X)
-        #print("Compare gradients: ", grad_w == grad_w2)
-    
+        # grad_individuals = []
+        # for idx in range(len(X)):
+        #     grad = dL_dy_pred[idx] * dy_pred_dz[idx] * X[idx]
+        #     grad_individuals.append(grad)
+
+        # grad_w = np.mean(grad_individuals, axis=0)
+        
         # calculate the gradient for bias
+        grad_w = (dL_dy_pred * dy_pred_dz) @ X / len(X)
         grad_b = np.dot(dL_dy_pred, dy_pred_dz)
 
         return grad_w, grad_b

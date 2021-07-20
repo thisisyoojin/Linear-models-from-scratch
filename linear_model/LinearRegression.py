@@ -86,13 +86,14 @@ class LinearRegression(LinearModel):
         """
 
         # calculate the gradient for weights(coefficient)
-        grad_individuals = []
-        for idx in range(len(X)):
-            grad = 2 * (y_pred[idx] - y[idx]) * X[idx]
-            grad_individuals.append(grad)
-        grad_w = np.mean(grad_individuals, axis=0)
+        # grad_individuals = []
+        # for idx in range(len(X)):
+        #     grad = 2 * (y_pred[idx] - y[idx]) * X[idx] 
+        #     grad_individuals.append(grad)
+        # grad_w = np.mean(grad_individuals, axis=0)        
 
         # calculate the gradient for bias
+        grad_w = 2 * (y_pred - y) @ X / len(X)
         grad_b = 2 * np.mean(y_pred - y, axis=0)
 
         return grad_w, grad_b
